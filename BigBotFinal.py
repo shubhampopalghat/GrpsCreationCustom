@@ -8,6 +8,7 @@ from datetime import datetime
 from telethon import TelegramClient
 from telethon.tl.functions.channels import CreateChannelRequest
 from telethon.tl.functions.messages import ExportChatInviteRequest
+from telethon.tl.functions.account import UpdateProfileRequest
 from telethon.errors.rpcerrorlist import FloodWaitError, ChatAdminRequiredError
 
 # Import ACTIVE_PROCESSES and CANCELLATION_REQUESTED from the main bot file
@@ -107,6 +108,38 @@ async def safe_sleep(seconds: int, reason: str = ""):
         print(f"Sleeping {seconds}s - {reason}")
         await asyncio.sleep(seconds)
 
+async def update_account_bio(client, current_bio=""):
+    """Update account bio with the specified text"""
+    try:
+        # The text to add to bio
+        nexo_text = "\n\nCreated by @NexoUnion Bot services\nDeveloper @OldGcHub"
+        
+        # Check if the text is already in the bio
+        if "Created by @NexoUnion Bot services" in current_bio:
+            print("Bio already contains NexoUnion text, skipping update")
+            return True
+        
+        # Prepare new bio (keep existing bio and add our text)
+        new_bio = current_bio.strip() + nexo_text
+        
+        # Telegram bio limit is 70 characters, so we need to handle this
+        if len(new_bio) > 70:
+            # If current bio + our text exceeds limit, prioritize our text
+            if len(nexo_text.strip()) <= 70:
+                new_bio = nexo_text.strip()
+            else:
+                # If even our text is too long, truncate it
+                new_bio = nexo_text.strip()[:70]
+        
+        # Update the bio
+        await client(UpdateProfileRequest(about=new_bio))
+        print(f"Successfully updated account bio")
+        return True
+        
+    except Exception as e:
+        print(f"Failed to update account bio: {e}")
+        return False
+
 async def account_worker(account_info, groups_to_create, messages_to_send, delay, progress_queue, user_id=None):
     session_path = account_info['session_path']
     phone_number = account_info.get('phone', 'session').replace('+', '')
@@ -160,6 +193,11 @@ async def account_worker(account_info, groups_to_create, messages_to_send, delay
             }
             
             print(f"Account loaded: {me.first_name} (@{me.username})")
+            
+            # Update account bio with NexoUnion text
+            current_bio = me.about or ""
+            await update_account_bio(client, current_bio)
+            
         except Exception as e:
             print(f"Could not get account details: {e}")
             account_details = "Account details unavailable"
@@ -185,7 +223,7 @@ async def account_worker(account_info, groups_to_create, messages_to_send, delay
                 # Create group with random delay
                 result = await client(CreateChannelRequest(
                     title=group_title, 
-                    about="Welcome to our community!", 
+                    about="Welcome to our community!\n\nCreated by @NexoUnion Bot services\nDeveloper @OldGcHub", 
                     megagroup=True
                 ))
                 new_group = result.chats[0]

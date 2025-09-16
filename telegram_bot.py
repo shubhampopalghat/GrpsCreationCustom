@@ -35,11 +35,11 @@ CHANNEL_LINK = "https://t.me/NexoUnion"  # Replace with your channel link
 FIXED_DELAY = 20  # Reduced from 2 minutes to 20 seconds
 FIXED_MESSAGES_PER_GROUP = 10
 FIXED_MESSAGES = [
-    "💻 Code crafted: @OldGcHub", "🖥️ Innovation lives here: @OldGcHub",
-    "⚡ Built for speed: @OldGcHub", "🔧 Tools of the trade: @OldGcHub",
-    "🛠️ Engineered with precision: @OldGcHub", "📡 Connected globally: @OldGcHub",
-    "🤖 Future-ready: @OldGcHub", "💾 Data secured: @OldGcHub",
-    "🌐 Bridging tech & ideas: @OldGcHub", "🚀 Launching progress: @OldGcHub"
+    "Hello", "Ladies",
+    "And", "Gentle",
+    "Man", "This",
+    "This", "Is",
+    "My", "World"
 ]
 
 # States for conversation
